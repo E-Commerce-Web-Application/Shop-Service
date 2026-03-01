@@ -3,6 +3,7 @@ from sqlalchemy.orm import DeclarativeBase
 from app.core.config import DB_URL
 from collections.abc import AsyncGenerator
 
+
 class Base(DeclarativeBase):
     pass
 
@@ -17,4 +18,8 @@ async_session_maker = async_sessionmaker(
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
-        yield session
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise

@@ -1,0 +1,35 @@
+from fastapi import APIRouter, Depends
+from app.services.shop_service import ShopService, get_shop_service
+from app.schemas.shop_schemas import ShopRead, ShopCreate, ShopUpdate
+from app.controllers import shop_controller
+
+router = APIRouter(prefix="/shops", tags=["Shops"])
+
+
+@router.get("/", response_model=list[ShopRead])
+async def get_all_shops(shop_service: ShopService = Depends(get_shop_service)):
+    return await shop_controller.get_all_shops(shop_service)
+
+
+@router.get("/{id}", response_model=ShopRead)
+async def get_shop(id: str, shop_service: ShopService = Depends(get_shop_service)):
+    return await shop_controller.get_shop(id, shop_service)
+
+
+@router.post("/", response_model=ShopRead)
+async def create_shop(
+    data: ShopCreate, shop_service: ShopService = Depends(get_shop_service)
+):
+    return await shop_controller.create_shop(data, shop_service)
+
+
+@router.patch("/{id}", response_model=ShopRead)
+async def update_shop(
+    id: str, data: ShopUpdate, shop_service: ShopService = Depends(get_shop_service)
+):
+    return await shop_controller.update_shop(id, data, shop_service)
+
+
+@router.delete("/{id}")
+async def delete_shop(id: str, shop_service: ShopService = Depends(get_shop_service)):
+    return await shop_controller.delete_shop(id, shop_service)
