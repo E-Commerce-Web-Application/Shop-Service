@@ -47,12 +47,11 @@ async def create_shop(data: ShopCreate, shop_service: ShopService):
 
 async def update_shop(id: UUID, data: ShopUpdate, shop_service: ShopService):
     try:
-        shop = await shop_service.get_shop(id)
+
+        shop = await shop_service.update_shop(id, data)
 
         if not shop:
             raise HTTPException(status_code=404, detail="Shop not found!")
-
-        shop = await shop_service.update_shop(id, data)
 
         return {"message": "Shop is updated successfully", "shop": shop}
 
