@@ -26,6 +26,7 @@ class ShopService:
             email=shop_data.email,
             phone=shop_data.phone,
             location=shop_data.location,
+            owner_id=shop_data.owner_id,
         )
 
         self.session.add(new_shop)
@@ -35,8 +36,11 @@ class ShopService:
         return new_shop
 
     async def update_shop(self, id: UUID, shop_data: ShopUpdate) -> Shop | None:
-        
+
         shop = await self.session.get(Shop, id)
+
+        if not shop:
+            return None
 
         if shop_data.name is not None:
             shop.name = shop_data.name

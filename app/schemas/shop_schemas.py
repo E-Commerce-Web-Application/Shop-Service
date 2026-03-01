@@ -13,11 +13,12 @@ class ShopBase(BaseModel):
 
 
 class ShopCreate(ShopBase):
-    pass
+    owner_id: UUID
 
 
 class ShopRead(ShopBase):
     id: UUID
+    owner_id: UUID
     created_at: datetime
     updated_at: datetime
 
