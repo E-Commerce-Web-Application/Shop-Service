@@ -4,7 +4,8 @@ from app.services.shop_service import ShopService
 from grpc import StatusCode
 from grpc.aio import ServicerContext
 from app.generated.shop import shop_pb2 as shop_pb
-from app.schemas.shop_schemas import ShopCreate
+from app.schemas.shop_schemas import ShopCreate, ShopUpdate
+from uuid import UUID
 
 
 class ShopGrpcService(ShopServiceServicer):
@@ -18,7 +19,22 @@ class ShopGrpcService(ShopServiceServicer):
 
                 shops = await service.get_all_shops()
 
-                return shops
+                return shop_pb.Shops(
+                    shops=[
+                        shop_pb.Shop(
+                            id=str(shop.id),
+                            name=shop.name,
+                            description=shop.description,
+                            location=shop.location,
+                            email=shop.email,
+                            phone=shop.phone,
+                            owner_id=str(shop.owner_id),
+                            created_at=shop.created_at,
+                            updated_at=shop.updated_at,
+                        )
+                        for shop in shops
+                    ]
+                )
 
         except Exception as e:
             await context.abort(
@@ -30,7 +46,7 @@ class ShopGrpcService(ShopServiceServicer):
             async with self.session_factory() as session:
                 service = ShopService(session)
 
-                shop = await service.get_shop(request.id)
+                shop = await service.get_shop(UUID(request.id))
 
                 if not shop:
                     await context.abort(StatusCode.NOT_FOUND, details="Shop not found!")
@@ -42,7 +58,7 @@ class ShopGrpcService(ShopServiceServicer):
                     email=shop.email,
                     phone=shop.phone,
                     location=shop.location,
-                    owner_id=shop.owner_id,
+                    owner_id=str(shop.owner_id),
                     created_at=shop.created_at,
                     updated_at=shop.updated_at,
                 )
@@ -63,6 +79,7 @@ class ShopGrpcService(ShopServiceServicer):
                     email=request.email,
                     phone=request.phone,
                     location=request.location,
+                    owner_id=request.owner_id,
                 )
 
                 shop = await service.create_shop(shop_data)
@@ -74,7 +91,7 @@ class ShopGrpcService(ShopServiceServicer):
                     email=shop.email,
                     phone=shop.phone,
                     location=shop.location,
-                    owner_id=shop.owner_id,
+                    owner_id=str(shop.owner_id),
                     created_at=shop.created_at,
                     updated_at=shop.updated_at,
                 )
@@ -94,16 +111,24 @@ class ShopGrpcService(ShopServiceServicer):
                 if not shop:
                     await context.abort(StatusCode.NOT_FOUND, details="Shop not found!")
 
-                data = shop_pb.ShopUpdate(
-                    id=str(request.id),
-                    name=request.name,
-                    description=request.description,
-                    location=request.location,
-                    email=request.email,
-                    phone=request.password,
+                data = ShopUpdate(
+                    id=UUID(request.id),
+                    name=request.name.value if request.HasField("name") else None,
+                    description=(
+                        request.description.value
+                        if request.HasField("description")
+                        else None
+                    ),
+                    location=(
+                        request.location.value if request.HasField("location") else None
+                    ),
+                    email=request.email.value if request.HasField("email") else None,
+                    phone=request.phone.value if request.HasField("phone") else None,
                 )
 
-                updated_shop = await service.update_shop(data)
+                updated_shop = await service.update_shop(
+                    id=UUID(request.id), shop_data=data
+                )
 
                 return shop_pb.Shop(
                     id=str(updated_shop.id),
@@ -112,14 +137,14 @@ class ShopGrpcService(ShopServiceServicer):
                     email=updated_shop.email,
                     phone=updated_shop.phone,
                     location=updated_shop.location,
-                    owner_id=updated_shop.owner_id,
+                    owner_id=str(updated_shop.owner_id),
                     created_at=updated_shop.created_at,
                     updated_at=updated_shop.updated_at,
                 )
 
         except Exception as e:
             await context.abort(
-                StatusCode.INTERNAL, details="Error in updating the shop"
+                StatusCode.INTERNAL, details="Error in updating the shop! : " + str(e)
             )
 
     async def Delete(self, request, context: ServicerContext):
@@ -127,7 +152,7 @@ class ShopGrpcService(ShopServiceServicer):
             async with self.session_factory() as session:
                 service = ShopService(session)
 
-                shop = await service.delete_shop(request.id)
+                shop = await service.delete_shop(UUID(request.id))
 
                 if shop is None:
                     await context.abort(StatusCode.NOT_FOUND, details="Shop not found!")

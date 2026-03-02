@@ -24,7 +24,8 @@ RUN groupadd --system --gid 999 nonroot \
  && useradd --system --gid 999 --uid 999 --create-home nonroot
 
 
-COPY --from=builder --chown=app:app /app/.venv /app/.venv
+COPY --from=builder --chown=nonroot:nonroot /app/.venv /app/.venv
+COPY --from=builder --chown=nonroot:nonroot /app/app /app/app
 
 ENV PATH="/app/.venv/bin:$PATH"
 
@@ -32,4 +33,4 @@ USER nonroot
 
 WORKDIR /app
 
-CMD ["uvicorn", "shop-service:app", "--host", "0.0.0.0", "--port","5000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5000"]
