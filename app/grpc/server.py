@@ -4,13 +4,13 @@ from app.grpc.handlers import ShopGrpcService
 from app.core.database import async_session_maker
 from app.core.config import GRPC_SERVER_PORT
 
+
 class GrpcServer:
     def __init__(self):
         self.server = grpc.aio.server()
 
         shop_pb2_grpc.add_ShopServiceServicer_to_server(
-            ShopGrpcService(async_session_maker),
-            self.server
+            ShopGrpcService(async_session_maker), self.server
         )
 
         self.server.add_insecure_port(f"[::]:{GRPC_SERVER_PORT}")
