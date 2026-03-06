@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Service
+metadata:
+  name: shop-service-service
+  labels:
+    app: shop-service-service
+spec:
+  selector:
+    app: shop-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30050
+
+    - name: grpc
+      protocol: TCP
+      port: 50051
+      targetPort: 50051
+  type: ClusterIP

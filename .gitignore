@@ -15,3 +15,6 @@ wheels/
 !.env.example
 
 /app/generated/
+
+# k8
+/k8s/secret.yaml
