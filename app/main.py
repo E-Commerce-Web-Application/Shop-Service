@@ -30,11 +30,11 @@ app.add_middleware(
 app.include_router(shop_routes.router)
 
 
-@app.get("/")
+@app.get("/shops")
 async def root():
     return {"message": "Shop service is active"}
 
 
-@app.get("/health")
+@app.get("/shops/health")
 async def health():
     return {"message": "Shop service is running..."}
