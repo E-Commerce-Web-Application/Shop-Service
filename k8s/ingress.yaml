@@ -1,13 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: e-commerce-service-Ingress
+  name: e-commerce-service-ingress
   annotations:
-    kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/subnets: subnet-00ed643917a9b6f7d, subnet-06ea045aaed8e1fa2
+    alb.ingress.kubernetes.io/healthcheck-port: "5000"
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
 spec:
-  ingressClassName: e-commerce-ingress
+  ingressClassName: alb
   rules:
   - http:
       paths:

@@ -147,7 +147,7 @@ class ShopGrpcService(ShopServiceServicer):
                 StatusCode.INTERNAL, details="Error in updating the shop! : " + str(e)
             )
 
-    async def Delete(self, request, context: ServicerContext):
+    async def DeleteShop(self, request, context: ServicerContext):
         try:
             async with self.session_factory() as session:
                 service = ShopService(session)
@@ -157,7 +157,7 @@ class ShopGrpcService(ShopServiceServicer):
                 if shop is None:
                     await context.abort(StatusCode.NOT_FOUND, details="Shop not found!")
 
-                return None
+                return shop_pb.VoidNoParam()
         except Exception as e:
             await context.abort(
                 StatusCode.INTERNAL, details="Error in deleting the shop"

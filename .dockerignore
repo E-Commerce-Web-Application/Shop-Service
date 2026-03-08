@@ -1,0 +1,50 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Local configuration files
+*.env
+*.ini
+*.cfg
+*.local
+
+# Logs
+*.log
+
+# Docker & CI files
+docker-compose.override.yml
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# VS Code / IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Bytecode / caches
+*.pytest_cache/
+*.mypy_cache/
+*.coverage
+.coverage.*
+
+# Distribution / build directories
+build/
+dist/
+*.egg-info/
+__pypackages__/
+
+k8s/
+/app/generated
+
+Makefile

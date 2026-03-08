@@ -1,0 +1,49 @@
+name: Shop-Service CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+env:
+  AWS_REGION: ${{secrets.AWS_REGION}}
+  ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}
+  EKS_CLUSTER_NAME: ${{secrets.EKS_CLUSTER_NAME}}
+  DEPLOYMENT_NAME: shop-service-deployment
+
+jobs:
+  deploy:
+    name: deploy-shop-service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{env.AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Docker image
+        env:
+          REGISTRY: ${{steps.ecr-login.outputs.registry}}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy to EKS
+        run: |
+          aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
+          kubectl rollout restart deployment $DEPLOYMENT_NAME
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment $DEPLOYMENT_NAME
