@@ -17,7 +17,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: shop-service
-          image: shop-service
+          image: 323928186636.dkr.ecr.us-east-1.amazonaws.com/shop-service
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
