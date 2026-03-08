@@ -25,5 +25,5 @@ spec:
           envFrom:
             - secretRef:
                 name: shop-service-envs
-    imagePullSecrets:
-      - name: ecr-pull-secret
+      imagePullSecrets:
+        - name: ecr-pull-secret
