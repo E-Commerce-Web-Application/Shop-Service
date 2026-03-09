@@ -2,6 +2,7 @@ from app.services.shop_service import ShopService
 from fastapi import HTTPException
 from uuid import UUID
 from app.schemas.shop_schemas import ShopCreate, ShopUpdate
+from app.constants.messages import SHOP_NOT_FOUND_MESSAGE
 
 
 async def get_all_shops(shop_service: ShopService):
@@ -18,11 +19,10 @@ async def get_all_shops(shop_service: ShopService):
 
 async def get_shop(id: UUID, shop_service: ShopService):
     try:
-
         shop = await shop_service.get_shop(id)
 
         if not shop:
-            raise HTTPException(status_code=404, detail="Shop not found!")
+            raise HTTPException(status_code=404, detail=SHOP_NOT_FOUND_MESSAGE)
 
         return shop
 
@@ -34,7 +34,6 @@ async def get_shop(id: UUID, shop_service: ShopService):
 
 async def create_shop(data: ShopCreate, shop_service: ShopService):
     try:
-
         shop = await shop_service.create_shop(data)
 
         return {"message": "Shop is created successfully", "shop": shop}
@@ -47,11 +46,10 @@ async def create_shop(data: ShopCreate, shop_service: ShopService):
 
 async def update_shop(id: UUID, data: ShopUpdate, shop_service: ShopService):
     try:
-
         shop = await shop_service.update_shop(id, data)
 
         if not shop:
-            raise HTTPException(status_code=404, detail="Shop not found!")
+            raise HTTPException(status_code=404, detail=SHOP_NOT_FOUND_MESSAGE)
 
         return {"message": "Shop is updated successfully", "shop": shop}
 
@@ -66,7 +64,7 @@ async def delete_shop(id: UUID, shop_service: ShopService):
         result = await shop_service.delete_shop(id)
 
         if not result:
-            raise HTTPException(status_code=404, detail="Shop not found!")
+            raise HTTPException(status_code=404, detail=SHOP_NOT_FOUND_MESSAGE)
 
         return {"message": "Shop is deleted successfully"}
 
