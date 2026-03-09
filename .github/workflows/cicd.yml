@@ -55,6 +55,7 @@ jobs:
           SNYK_TOKEN: ${{secrets.SNYK_TOKEN}}
         with:
           image: ${{steps.ecr-login.outputs.registry}}/${{env.ECR_REPOSITORY}}:${{env.IMAGE_TAG}}
+          args: --auth-type=token --severity-threshold=high
 
       - name: Deploy to EKS
         run: |
