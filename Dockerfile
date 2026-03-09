@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:trixie-slim AS builder
+FROM ghcr.io/astral-sh/uv:python3.14-trixie-slim AS builder
 
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
@@ -8,7 +8,8 @@ ENV UV_PYTHON_DOWNLOADS=0
 
 WORKDIR /app
 
-RUN pip install grpcio-tools
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install grpcio-tools
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
@@ -19,7 +20,7 @@ COPY . /app
 
 RUN mkdir -p app/generated
 
-RUN python -m grpc_tools.protoc \
+RUN python3 -m grpc_tools.protoc \
 	-I ./protos \
 	--python_out=. \
 	--grpc_python_out=. \
