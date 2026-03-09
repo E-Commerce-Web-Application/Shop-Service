@@ -47,4 +47,6 @@ __pypackages__/
 k8s/
 /app/generated
 
+.ruff_cache
+
 Makefile

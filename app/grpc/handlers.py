@@ -6,6 +6,7 @@ from grpc.aio import ServicerContext
 from app.generated.shop import shop_pb2 as shop_pb
 from app.schemas.shop_schemas import ShopCreate, ShopUpdate
 from uuid import UUID
+from app.constants.messages import SHOP_NOT_FOUND_MESSAGE
 
 
 class ShopGrpcService(ShopServiceServicer):
@@ -49,7 +50,9 @@ class ShopGrpcService(ShopServiceServicer):
                 shop = await service.get_shop(UUID(request.id))
 
                 if not shop:
-                    await context.abort(StatusCode.NOT_FOUND, details="Shop not found!")
+                    await context.abort(
+                        StatusCode.NOT_FOUND, details=SHOP_NOT_FOUND_MESSAGE
+                    )
 
                 return shop_pb.Shop(
                     id=str(shop.id),
@@ -65,7 +68,7 @@ class ShopGrpcService(ShopServiceServicer):
 
         except Exception as e:
             await context.abort(
-                StatusCode.INTERNAL, details="Error in getting the shop"
+                StatusCode.INTERNAL, details="Error in getting the shop! : " + str(e)
             )
 
     async def CreateShop(self, request, context: ServicerContext):
@@ -98,7 +101,7 @@ class ShopGrpcService(ShopServiceServicer):
 
         except Exception as e:
             await context.abort(
-                StatusCode.INTERNAL, details="Error in creating the shop"
+                StatusCode.INTERNAL, details="Error in creating the shop! : " + str(e)
             )
 
     async def UpdateShop(self, request, context: ServicerContext):
@@ -109,7 +112,9 @@ class ShopGrpcService(ShopServiceServicer):
                 shop = await service.get_shop(request.id)
 
                 if not shop:
-                    await context.abort(StatusCode.NOT_FOUND, details="Shop not found!")
+                    await context.abort(
+                        StatusCode.NOT_FOUND, details=SHOP_NOT_FOUND_MESSAGE
+                    )
 
                 data = ShopUpdate(
                     id=UUID(request.id),
@@ -155,10 +160,12 @@ class ShopGrpcService(ShopServiceServicer):
                 shop = await service.delete_shop(UUID(request.id))
 
                 if shop is None:
-                    await context.abort(StatusCode.NOT_FOUND, details="Shop not found!")
+                    await context.abort(
+                        StatusCode.NOT_FOUND, details=SHOP_NOT_FOUND_MESSAGE
+                    )
 
                 return shop_pb.VoidNoParam()
         except Exception as e:
             await context.abort(
-                StatusCode.INTERNAL, details="Error in deleting the shop"
+                StatusCode.INTERNAL, details="Error in deleting the shop! : " + str(e)
             )

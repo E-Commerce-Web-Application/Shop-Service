@@ -6,13 +6,12 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
-from app.models.shop_model import Shop
 from app.core.database import Base
 from app.core.config import DB_URL
 import ssl
 
 
-ssl_context = ssl.create_default_context()
+ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
 config = context.config
 config.set_main_option("sqlalchemy.url", DB_URL)
 
@@ -62,9 +61,7 @@ async def run_async_migrations() -> None:
     """
 
     connectable = create_async_engine(
-        DB_URL,
-        poolclass=pool.NullPool,
-        connect_args={"ssl": ssl_context}
+        DB_URL, poolclass=pool.NullPool, connect_args={"ssl": ssl_context}
     )
 
     async with connectable.connect() as connection:

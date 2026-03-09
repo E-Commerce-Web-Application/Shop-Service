@@ -5,7 +5,7 @@ metadata:
   labels:
     app: shop-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: shop-service
@@ -17,7 +17,16 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: shop-service
-          image: 323928186636.dkr.ecr.us-east-1.amazonaws.com/shop-service
+          image: 323928186636.dkr.ecr.us-east-1.amazonaws.com/shop-service:latest
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+              ephemeral-storage: "512Mi"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+              ephemeral-storage: "1Gi"
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
@@ -25,5 +34,12 @@ spec:
           envFrom:
             - secretRef:
                 name: shop-service-envs
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 999
+            capabilities:
+              drop:
+                - ALL
       imagePullSecrets:
         - name: ecr-pull-secret

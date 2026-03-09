@@ -11,8 +11,15 @@ class Shop(Base):
     name = Column(String(150), nullable=False)
     description = Column(String(300), nullable=False)
     location = Column(String(100), nullable=False)
-    email = Column(String(200),nullable=False)
+    email = Column(String(200), nullable=False)
     phone = Column(String(15), nullable=False)
     owner_id = Column(UUID(as_uuid=True), nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )

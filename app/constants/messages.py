@@ -1,0 +1,1 @@
+SHOP_NOT_FOUND_MESSAGE = "Shop not found!"
