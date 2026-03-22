@@ -24,7 +24,15 @@ async def get_shop(id: UUID, shop_service: ShopService):
         if not shop:
             raise HTTPException(status_code=404, detail=SHOP_NOT_FOUND_MESSAGE)
 
-        return shop
+        products = await shop_service.get_shop_products(id)
+        reviews = await shop_service.get_shop_reviews(id)
+
+        return {
+            "message": "Shop is fetched successfully",
+            "shop": shop,
+            "products": products,
+            "reviews": reviews,
+        }
 
     except Exception as e:
         raise HTTPException(

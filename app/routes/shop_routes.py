@@ -14,7 +14,7 @@ async def get_all_shops(
     return await shop_controller.get_all_shops(shop_service)
 
 
-@router.get("/{id}", response_model=ShopRead)
+@router.get("/{id}")
 async def get_shop(
     id: str, shop_service: Annotated[ShopService, Depends(get_shop_service)]
 ):

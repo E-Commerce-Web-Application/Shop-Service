@@ -5,6 +5,7 @@ from sqlalchemy import select
 from app.schemas.shop_schemas import ShopCreate, ShopUpdate
 from fastapi import Depends
 from app.core.database import get_async_session
+from app.grpc.clients import product_stub, review_stub
 
 
 class ShopService:
@@ -72,6 +73,26 @@ class ShopService:
         await self.session.commit()
 
         return shop
+
+    async def get_shop_products(self, id: UUID):
+        shop = await self.session.get(Shop, id)
+
+        if not shop:
+            return None
+
+        products = await product_stub.GetProductsFromShopID()
+
+        return products
+    
+    async def get_shop_reviews(self, id:UUID):
+        shop = await self.session.get(Shop, id)
+
+        if not shop:
+            return None
+
+        reviews = await review_stub.GetReviewsFromShopID()
+
+        return reviews
 
 
 def get_shop_service(session: AsyncSession = Depends(get_async_session)) -> ShopService:
