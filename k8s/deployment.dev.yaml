@@ -17,7 +17,8 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: shop-service
-          image: 382736934164.dkr.ecr.us-east-1.amazonaws.com/shop-service
+          image: shop-service:v1
+          imagePullPolicy: Never
           resources:
             requests:
               memory: "256Mi"
@@ -27,7 +28,6 @@ spec:
               memory: "512Mi"
               cpu: "500m"
               ephemeral-storage: "1Gi"
-          imagePullPolicy: Always
           ports:
             - containerPort: 5000
             - containerPort: 50051
@@ -41,5 +41,3 @@ spec:
             capabilities:
               drop:
                 - ALL
-      imagePullSecrets:
-        - name: ecr-pull-secret

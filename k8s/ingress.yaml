@@ -3,20 +3,28 @@ kind: Ingress
 metadata:
   name: e-commerce-service-ingress
   annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: "/health"
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets: subnet-00ed643917a9b6f7d, subnet-06ea045aaed8e1fa2
+    alb.ingress.kubernetes.io/subnets: subnet-0bc9a11691de275e5, subnet-020fa8799fa6f6c16
     alb.ingress.kubernetes.io/healthcheck-port: "5000"
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
 spec:
   ingressClassName: alb
   rules:
-  - http:
-      paths:
-      - path: /shops
-        pathType: Prefix
-        backend:
-          service:
-            name: shop-service-service
-            port:
-              number: 5000
+    - http:
+        paths:
+          - path: /shops
+            pathType: Prefix
+            backend:
+              service:
+                name: shop-service-service
+                port:
+                  number: 5000
+          - path: /products
+            pathType: Prefix
+            backend:
+              service:
+                name: product-service-http
+                port:
+                  number: 8000

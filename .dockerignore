@@ -45,7 +45,6 @@ dist/
 __pypackages__/
 
 k8s/
-/app/generated
 
 .ruff_cache
 
