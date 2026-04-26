@@ -32,3 +32,10 @@ class ShopUpdate(ShopBase):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     location: Optional[str] = None
+
+
+class ShopReviewCreate(BaseModel):
+    shop_id: UUID
+    user_id: UUID
+    rating: int
+    comment: str

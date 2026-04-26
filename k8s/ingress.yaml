@@ -3,9 +3,10 @@ kind: Ingress
 metadata:
   name: e-commerce-service-ingress
   annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: "/health"
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets: subnet-00ed643917a9b6f7d, subnet-06ea045aaed8e1fa2
+    alb.ingress.kubernetes.io/subnets: subnet-0d051e2df8d6fb117, subnet-0bac8db3cce092b54
     alb.ingress.kubernetes.io/healthcheck-port: "5000"
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
 spec:

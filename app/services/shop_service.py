@@ -6,6 +6,8 @@ from app.schemas.shop_schemas import ShopCreate, ShopUpdate
 from fastapi import Depends
 from app.core.database import get_async_session
 from app.grpc.clients import product_stub, review_stub
+from app.generated.product import product_pb2
+from app.generated.review import review_pb2
 
 
 class ShopService:
@@ -80,19 +82,65 @@ class ShopService:
         if not shop:
             return None
 
-        products = await product_stub.GetProductsFromShopID()
+        products = await product_stub.GetProductsFromShopID(
+            product_pb2.ShopID(shop_id=str(id))
+        )
 
         return products
-    
-    async def get_shop_reviews(self, id:UUID):
+
+    async def create_shop_review(
+        self, shop_id: UUID, user_id: UUID, rating: int, comment: str
+    ):
+        shop = await self.session.get(Shop, shop_id)
+
+        if not shop:
+            return None
+
+        review = await review_stub.CreateShopReview(
+            review_pb2.CreateShopReviewRequest(
+                shop_id=str(shop_id),
+                user_id=str(user_id),
+                rating=rating,
+                comment=comment,
+            )
+        )
+
+        return review
+
+    async def get_shop_reviews(self, id: UUID, page: int = 1, limit: int = 10):
         shop = await self.session.get(Shop, id)
 
         if not shop:
             return None
 
-        reviews = await review_stub.GetReviewsFromShopID()
+        reviews = await review_stub.GetReviewsByShopId(
+            review_pb2.GetReviewsByShopIdRequest(
+                shop_id=str(id), page=page, limit=limit
+            )
+        )
 
         return reviews
+
+    async def get_shop_average_rating(self, id: UUID):
+        shop = await self.session.get(Shop, id)
+
+        if not shop:
+            return None
+
+        rating = await review_stub.GetAverageRatingByShopId(
+            review_pb2.GetAverageRatingByShopIdRequest(shop_id=str(id))
+        )
+
+        return rating
+
+    async def get_user_shops(self, owner_id):
+        result = await self.session.execute(
+            select(Shop).where(Shop.owner_id == owner_id)
+        )
+
+        shops = result.scalars().all()
+
+        return shops
 
 
 def get_shop_service(session: AsyncSession = Depends(get_async_session)) -> ShopService:

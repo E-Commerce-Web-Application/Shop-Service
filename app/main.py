@@ -35,6 +35,6 @@ async def root():
     return {"message": "Shop service is active"}
 
 
-@app.get("/shops/health")
+@app.get("/health")
 async def health():
     return {"message": "Shop service is running..."}
